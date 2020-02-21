@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 
 class User extends Authenticatable
 {
@@ -16,9 +17,10 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'role_id', 'is_active', 'photo_id'
     ];
 
+    public $directory = '/uploads/';
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -40,4 +42,9 @@ class User extends Authenticatable
     public function role(){
         return $this->belongsTo('App\Role');
     }
+
+    public function photo(){
+        return $this->belongsTo('App\Photo');
+    }
+
 }
