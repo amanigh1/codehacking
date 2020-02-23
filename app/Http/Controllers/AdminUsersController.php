@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UsersEditRequest;
 use App\Http\Requests\UsersRequest;
 use App\Photo;
 use App\Role;
@@ -30,9 +31,9 @@ class AdminUsersController extends Controller
      */
     public function create()
     {
-        $roles = Role::all()->pluck('name','id')->toArray();
+        $roles = Role::all()->pluck('name', 'id')->toArray();
 
-        return view('admin.users.create',compact('roles'));
+        return view('admin.users.create', compact('roles'));
 
 
     }
@@ -40,7 +41,7 @@ class AdminUsersController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(UsersRequest $request)
@@ -49,17 +50,15 @@ class AdminUsersController extends Controller
 
         $input = $request->except('image');
 
-        if($file = $request->file('image')){
+        if($file = $request->file('photo_id')){
 
-            $name = time().$file->getClientOriginalName();
+            $name = time() . $file->getClientOriginalName();
             $file->move('uploads', $name);
             $photo = Photo::create(['file'=>$name]);
             $input['photo_id'] = $photo->id;
         }
 
-        $input['password'] = password_hash($request->password, PASSWORD_DEFAULT);
-//        dd($input,$photo);
-
+        $input['password'] = bcrypt(trim($request->password));
         User::create($input);
 
         return redirect()->route('users.index');
@@ -68,43 +67,68 @@ class AdminUsersController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-       //
+        //
 
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
     {
-        return view('admin.users.edit');
+        $user = User::findOrFail($id);
+        $roles = Role::all()->pluck('name', 'id')->toArray();
+
+
+        return view('admin.users.edit',compact('roles','user'));
 
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UsersEditRequest $request, $id)
     {
-        //
+
+        if(trim($request->password) == ''){
+            $input = $request->except('password');
+        }else{
+            $input = $request->all();
+            $input['password'] = bcrypt($request->password);
+        }
+
+
+
+        if($file = $request->file('photo_id')){
+
+            $name = time() . $file->getClientOriginalName();
+            $file->move('uploads', $name);
+            $photo = Photo::create(['file'=>$name]);
+            $input['photo_id'] = $photo->id;
+        }
+
+
+        User::findOrFail($id)->update($input);
+
+        return redirect()->route('users.index');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)

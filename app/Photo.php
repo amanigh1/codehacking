@@ -6,5 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Photo extends Model
 {
+    protected $uploads = '/uploads/';
     protected $fillable = ['file'];
+
+    public function getFileAttribute($file){
+        return $this->uploads . $file;
+    }
 }

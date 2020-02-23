@@ -7,11 +7,12 @@
     <table class="table table-hover">
         <thead>
         <tr>
+            <th>ID</th>
             <th>Firstname</th>
+            <th>Photo</th>
             <th>Email</th>
             <th>Role</th>
             <th>Status</th>
-            <th>Photo</th>
             <th>Created</th>
             <th>Updated</th>
 
@@ -20,14 +21,12 @@
         <tbody>
         @foreach($users as $user)
             <tr>
-                <td>{{$user->name}}</td>
+                <td>{{$user->id}}</td>
+                <td><a href="{{route('users.edit', $user->id)}}"> {{$user->name}}</a></td>
+                <td><img src={{$user->photo ? $user->photo->file : 'https://placehold.it/50'}} alt="" width="50" height="50"></td>
                 <td>{{$user->email}}</td>
                 <td>{{$user->role->name}}</td>
                 <td>{{$user->status? 'Active' : 'Not Active'}}</td>
-                <td>
-
-                    <img src={{asset('uploads/'.$user->photo->file)}} alt="" width="30" height="30">
-                    </td>
                 <td>{{$user->created_at->diffForHumans()}}</td>
                 <td>{{$user->updated_at->diffForHumans()}}</td>
             </tr>
