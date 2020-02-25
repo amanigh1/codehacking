@@ -23,9 +23,9 @@
             <tr>
                 <td>{{$post->id}}</td>
                 <td><img src='{{$post->photo ? $post->photo->file : 'https://placehold.it/50'}}'
-                         class="card-img-overlay"  width="200" height="50" style="object-fit: cover"></td>
+                         class="card-img-overlay"  width="100" height="50" style="object-fit: cover"></td>
                 <td><a href="{{route('posts.edit', $post->id)}}"> {{$post->user->name}}</a></td>
-                <td>{{$post->category_id}}</td>
+                <td>{{$post->category->name}}</td>
                 <td>{{$post->title}}</td>
                 <td>{{$post->body}}</td>
                 <td>{{$post->created_at->diffForHumans()}}</td>
