@@ -7,7 +7,7 @@ use App\Http\Requests\UsersRequest;
 use App\Photo;
 use App\Role;
 use App\User;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 
 class AdminUsersController extends Controller
 {
@@ -50,16 +50,17 @@ class AdminUsersController extends Controller
 
         $input = $request->except('image');
 
-        if($file = $request->file('photo_id')){
+        if ($file = $request->file('photo_id')) {
 
             $name = time() . $file->getClientOriginalName();
             $file->move('uploads', $name);
-            $photo = Photo::create(['file'=>$name]);
+            $photo = Photo::create(['file' => $name]);
             $input['photo_id'] = $photo->id;
         }
 
         $input['password'] = bcrypt(trim($request->password));
         User::create($input);
+        session()->flash('msg', 'User successfully added.');
 
         return redirect()->route('users.index');
     }
@@ -88,7 +89,7 @@ class AdminUsersController extends Controller
         $roles = Role::all()->pluck('name', 'id')->toArray();
 
 
-        return view('admin.users.edit',compact('roles','user'));
+        return view('admin.users.edit', compact('roles', 'user'));
 
     }
 
@@ -102,26 +103,25 @@ class AdminUsersController extends Controller
     public function update(UsersEditRequest $request, $id)
     {
 
-        if(trim($request->password) == ''){
+        if (trim($request->password) == '') {
             $input = $request->except('password');
-        }else{
+        } else {
             $input = $request->all();
             $input['password'] = bcrypt($request->password);
         }
 
 
-
-        if($file = $request->file('photo_id')){
+        if ($file = $request->file('photo_id')) {
 
             $name = time() . $file->getClientOriginalName();
             $file->move('uploads', $name);
-            $photo = Photo::create(['file'=>$name]);
+            $photo = Photo::create(['file' => $name]);
             $input['photo_id'] = $photo->id;
         }
 
 
         User::findOrFail($id)->update($input);
-
+        session()->flash('msg', 'User successfully updated.');
         return redirect()->route('users.index');
     }
 
@@ -133,6 +133,16 @@ class AdminUsersController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $user = User::findOrFail($id);
+        $photo = Photo::findOrFail($user->photo_id);
+        File::delete(public_path($photo->file));
+        $photo->delete();
+        $user->delete();
+        session()->flash('msg', 'User successfully deleted.');
+
+        return redirect()->route('users.index');
+
+
+
     }
 }

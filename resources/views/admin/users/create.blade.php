@@ -2,7 +2,7 @@
 
 @section('content')
 
-    <h3>Create Users</h3>
+    <h3>Create User</h3>
 
         @include('includes.errors')
     {!! Form::open(['method'=> 'post', 'action' => 'AdminUsersController@store', 'files' => true]) !!}

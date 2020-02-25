@@ -2,11 +2,11 @@
 
 @section('content')
 
-    <h3>Edit Users</h3>
+    <h3>Edit User</h3>
 
     <div class="row">
         <div class="col-sm-4">
-            <img src={{$user->photo ? $user->photo->file : 'https://placehold.it/400'}} alt=""  class="img-responsive img-rounded">
+            <img src={{$user->photo ? $user->photo->file : 'https://placehold.it/400'}} alt=""  class="img-responsive img-circle">
         </div>
 
 
@@ -49,11 +49,18 @@
                 {!! Form::file('photo_id',  ['class'=>'form-control']) !!}
             </div>
 
-            <div class="form-group">
-                {!! Form::submit('Update User', ['class'=>'btn btn-primary']) !!}
-            </div>
+
+                {!! Form::submit('Update User', ['class'=>'btn btn-primary col-xs-6']) !!}
 
             {!! Form::close() !!}
+
+            {!! Form::open(['method'=> 'delete', 'action' => ['AdminUsersController@destroy', $user->id]]) !!}
+            {!! Form::submit('Delete!', ['class'=>'btn btn-danger pull-right']) !!}
+            {!! Form::close() !!}
+
+
+
+
         </div>
     </div>
 @endsection

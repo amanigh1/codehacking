@@ -2,7 +2,7 @@
 
 @section('content')
 
-    <h4>Admin Page.</h4>
+    <h4>Admin Page</h4>
 
 @endsection
 
